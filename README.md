@@ -61,10 +61,6 @@ npm run astro check  # فحص الكود
 https://rida-hdj.github.io/the-technical-repo/
 ```
 
-يُضبط ذلك في `astro.config.mjs` عبر `site` و `base`، وتحصل كل الروابط الداخلية
-والأصول على البادئة الصحيحة تلقائيًا عبر `import.meta.env.BASE_URL` دون أي
-تعديل يدوي عند تغيير الدومين لاحقًا.
-
 ## الرخص
 
 رخصة [MIT](LICENSE)

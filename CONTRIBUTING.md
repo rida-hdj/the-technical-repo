@@ -118,7 +118,6 @@ npm run dev       # تشغيل الخادم المحلي على http://localhost
 تأكد من أن:
 
 - صفحة المقال تعمل على `http://localhost:4321/the-technical-repo/posts/اسم-الملف/`.
-- الوسوم تفتح صفحتها على `http://localhost:4321/the-technical-repo/tags/اسم-الوسم/`.
 - الصورة تظهر بشكل صحيح.
 
 > ملاحظة: بسبب إعداد `base` في `astro.config.mjs`، تبدأ جميع الروابط المحلية
