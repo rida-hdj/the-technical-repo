@@ -43,7 +43,7 @@ npm run astro check  # فحص الكود
 │   │       └── small/       # مقالات قصيرة
 │   ├── pages/               # الصفحات والطرق (routes)
 │   │   ├── posts/[slug].astro   # صفحة المقال
-│   │   └── tags/[tag].astro     # صفحات الوسوم (توليد تلقائي)
+│   │   └── tags/[tag].astro
 │   ├── components/          # مكوّنات الواجهة (البطاقات، الهيدر، الفوتر)
 │   ├── layouts/             # القوالب (BaseLayout, PostLayout)
 │   ├── utils/               # أدوات مساعدة (روابط، بحث، وسوم)
