@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import PostMeta from './PostMeta.astro';
 import { slugifyTag } from '../utils/slug';
+import { url } from '../utils/url';
 
 interface Props {
   entry: CollectionEntry<'posts'>;
@@ -10,7 +11,7 @@ interface Props {
 
 const { entry, eager = false } = Astro.props;
 const { title, description, image, pubDate, tags } = entry.data;
-const href = `/posts/${entry.id}`;
+const href = url(`/posts/${entry.id}`);
 ---
 
 <article class="post-card main-post-card">
@@ -18,7 +19,7 @@ const href = `/posts/${entry.id}`;
     <a class="post-card-title-link" href={href} tabindex="-1" aria-hidden="true">
       <div class="cover">
         <img
-          src={image}
+          src={url(image)}
           alt={title}
           loading={eager ? 'eager' : 'lazy'}
           decoding="async"
@@ -40,7 +41,7 @@ const href = `/posts/${entry.id}`;
             <li>
               <a
                 class="badge tag-link"
-                href={`/tags/${encodeURIComponent(slugifyTag(tag))}`}
+                href={url(`/tags/${encodeURIComponent(slugifyTag(tag))}`)}
               >
                 #{tag}
               </a>

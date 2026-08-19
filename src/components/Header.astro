@@ -1,4 +1,6 @@
 ---
+import { url, baseUrl } from '../utils/url';
+
 interface Props {
   currentPath?: string;
 }
@@ -10,20 +12,22 @@ const nav = [
   { href: '/blog/', label: 'المدونة' },
   { href: '/about/', label: 'حول' },
 ];
-const isActive = (href: string) =>
-  href === '/' ? currentPath === '/' : currentPath?.startsWith(href);
+const isActive = (href: string) => {
+  const h = url(href);
+  return h === baseUrl ? currentPath === h : currentPath?.startsWith(h);
+};
 ---
 
 <header class="site-header">
   <div class="container site-header-inner">
-    <a class="site-brand" href="/" aria-label="المستودع التقني — الصفحة الرئيسية">
-      <img class="brand-mark" src="/logo.png" alt="" width="256" height="256" />
+    <a class="site-brand" href={url('/')} aria-label="المستودع التقني — الصفحة الرئيسية">
+      <img class="brand-mark" src={url('/logo.png')} alt="" width="256" height="256" />
       المستودع التقني
     </a>
 
     <nav class="site-nav" aria-label="التنقل الرئيسي">
       {nav.map((item) => (
-        <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+        <a href={url(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>
           {item.label}
         </a>
       ))}
@@ -140,6 +144,7 @@ const isActive = (href: string) =>
 <script>
   import { searchPosts, highlightHtml } from '../utils/search';
   import { formatDate } from '../utils/date';
+  import { url as baseUrl } from '../utils/url';
 
   function initSearch(): void {
     const container = document.getElementById('search-index-data');
@@ -221,7 +226,7 @@ const isActive = (href: string) =>
       } else {
         results.innerHTML = matches
           .map(
-            (entry) => `<a class="search-result" href="/posts/${entry.id}" role="option" data-search-result>
+            (entry) => `<a class="search-result" href="${baseUrl(`/posts/${entry.id}`)}" role="option" data-search-result>
         <span class="search-result-title">${highlightHtml(entry.title, value)}</span>
         ${
           entry.description.trim()

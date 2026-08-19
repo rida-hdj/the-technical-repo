@@ -4,6 +4,7 @@ import BaseLayout from './BaseLayout.astro';
 import PostMeta from '../components/PostMeta.astro';
 import SmallPostCard from '../components/SmallPostCard.astro';
 import { slugifyTag } from '../utils/slug';
+import { url } from '../utils/url';
 
 export interface RelatedItem {
   entry: CollectionEntry<'posts'>;
@@ -26,7 +27,7 @@ const isMain = type === 'main';
   title={title}
   description={description}
   image={image}
-  currentPath={`/posts/${entry.id}`}
+  currentPath={Astro.url.pathname}
 >
   <article class="article">
     <div class="article-header">
@@ -66,7 +67,7 @@ const isMain = type === 'main';
             <li>
               <a
                 class="badge tag-link"
-                href={`/tags/${encodeURIComponent(slugifyTag(tag))}`}
+                href={url(`/tags/${encodeURIComponent(slugifyTag(tag))}`)}
               >
                 #{tag}
               </a>
@@ -81,14 +82,14 @@ const isMain = type === 'main';
         <span class="arrow" aria-hidden="true">⟵</span>
         <span>هذا المقال جزء من:</span>
         <strong>
-          <a href={`/posts/${parent.id}`}>{parent.data.title}</a>
+          <a href={url(`/posts/${parent.id}`)}>{parent.data.title}</a>
         </strong>
       </div>
     )}
 
     {image && (
       <div class="article-cover">
-        <img src={image} alt={title} loading="eager" decoding="async" />
+        <img src={url(image)} alt={title} loading="eager" decoding="async" />
       </div>
     )}
 

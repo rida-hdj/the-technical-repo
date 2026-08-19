@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import PostMeta from './PostMeta.astro';
+import { url } from '../utils/url';
 
 interface Props {
   entry: CollectionEntry<'posts'>;
@@ -10,15 +11,15 @@ interface Props {
 
 const { entry, parent, showImage = false } = Astro.props;
 const { title, description, image, pubDate } = entry.data;
-const href = `/posts/${entry.id}`;
-const parentHref = parent ? `/posts/${parent.id}` : undefined;
+const href = url(`/posts/${entry.id}`);
+const parentHref = parent ? url(`/posts/${parent.id}`) : undefined;
 ---
 
 <article class="post-card">
   {showImage && image && (
     <a class="post-card-title-link" href={href} tabindex="-1" aria-hidden="true">
       <div class="cover cover--small">
-        <img src={image} alt={title} loading="lazy" decoding="async" />
+        <img src={url(image)} alt={title} loading="lazy" decoding="async" />
       </div>
     </a>
   )}

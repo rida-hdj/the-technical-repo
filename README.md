@@ -34,21 +34,36 @@ npm run astro check  # فحص الكود
 ## بنية المشروع
 
 ```text
-src/
-├── content/
-│   └── posts/          # المقالات (Markdown) — المصدر الوحيد للمحتوى
-│       ├── main/       # مقالات رئيسية
-│       └── small/      # مقالات قصيرة
-├── pages/              # الصفحات والطرق (routes)
-├── components/         # مكوّنات الواجهة
-├── layouts/            # القوالب
-└── utils/              # أدوات مساعدة
+.
+├── public/                  # الأصول الثابتة (الشعار logo.png، صور المقالات)
+├── src/
+│   ├── content/
+│   │   └── posts/           # المقالات (Markdown) — المصدر الوحيد للمحتوى
+│   │       ├── main/        # مقالات رئيسية
+│   │       └── small/       # مقالات قصيرة
+│   ├── pages/               # الصفحات والطرق (routes)
+│   │   ├── posts/[slug].astro   # صفحة المقال
+│   │   └── tags/[tag].astro     # صفحات الوسوم (توليد تلقائي)
+│   ├── components/          # مكوّنات الواجهة (البطاقات، الهيدر، الفوتر)
+│   ├── layouts/             # القوالب (BaseLayout, PostLayout)
+│   ├── utils/               # أدوات مساعدة (روابط، بحث، وسوم)
+│   └── styles/              # أنماط CSS العامة
+├── .github/workflows/       # النشر التلقائي إلى GitHub Pages
+├── astro.config.mjs         # إعدادات Astro (site + base)
+└── package.json
 ```
 
-## كتابة مقال جديد
+## النشر
 
-المقالات هي المصدر الوحيد للمحتوى؛ أضف ملف Markdown واحدًا فقط وستظهر صفحته
-راجع [دليل المساهمة](./CONTRIBUTING.md) للتفاصيل.
+يُبنى الموقع ويُنشر تلقائيًا عبر GitHub Actions إلى GitHub Pages على:
+
+```text
+https://rida-hdj.github.io/the-technical-repo/
+```
+
+يُضبط ذلك في `astro.config.mjs` عبر `site` و `base`، وتحصل كل الروابط الداخلية
+والأصول على البادئة الصحيحة تلقائيًا عبر `import.meta.env.BASE_URL` دون أي
+تعديل يدوي عند تغيير الدومين لاحقًا.
 
 ## الرخص
 

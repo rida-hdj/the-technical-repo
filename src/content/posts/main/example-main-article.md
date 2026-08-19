@@ -7,7 +7,7 @@ type: "main"
 pubDate: 2026-08-19
 tags:
   - المدونة
-image: "/public/images/the-technical-repo.jpg"
+image: "/images/the-technical-repo.jpg"
 ---
 
 # مرحبًا بكم في المستودع التقني

@@ -2,6 +2,7 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { getCollection } from 'astro:content';
+import { url } from '../utils/url';
 import '../styles/global.css';
 
 interface Props {
@@ -19,6 +20,9 @@ const {
 } = Astro.props;
 
 const pageTitle = title ? `${title} — المستودع التقني` : 'المستودع التقني';
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = image ? new URL(url(image), Astro.site).href : undefined;
 
 const searchIndex = (await getCollection('posts', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
@@ -41,7 +45,7 @@ const searchIndexJson = JSON.stringify(searchIndex).replace(/</g, '\\u003c');
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="icon" type="image/png" href={url('/logo.png')} />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
 
@@ -49,10 +53,10 @@ const searchIndexJson = JSON.stringify(searchIndex).replace(/</g, '\\u003c');
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content="المستودع التقني" />
-    {image && <meta property="og:image" content={image} />}
+    {ogImage && <meta property="og:image" content={ogImage} />}
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="canonical" href={Astro.url.pathname} />
+    <link rel="canonical" href={canonicalUrl} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
