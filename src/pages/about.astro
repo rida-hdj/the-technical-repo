@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const pathname = Astro.url.pathname;
+---
+
+<BaseLayout
+  title="حول"
+  description="عن المستودع التقني وماذا يكتب هنا."
+  currentPath={pathname}
+>
+  <article class="article page-top">
+    <header class="article-header">
+      <h1>حول المدونة</h1>
+      <p class="article-description">
+        المستودع التقني مدوّنة تهدف إلى تقديم شروحات تقنية.
+      </p>
+    </header>
+
+    <div class="prose">
+      <h2>ماذا نكتب؟</h2>
+      <p>
+        التركيز على البرمجيات مفتوحة المصدر والنظم التي تبنى عليها: أنظمة التشغيل،
+        أدوات المطوّرين، والبرمجة عمومًا. كل مفهوم نغطيه، أو نرجع به إلى جذوره.
+      </p>
+
+      <h2>نموذج النشر</h2>
+      <p>
+        ننشر نوعين من المقالات:
+      </p>
+      <ul>
+        <li>
+          <strong>مقالات رئيسية:</strong> شروحات موسّعة تغطي موضوعًا واسعًا.
+        </li>
+        <li>
+          <strong>مقالات قصيرة:</strong> شروحات مركزة لأحد المفاهيم، وتُنشر
+          دائمًا مرتبطة بمقالها الرئيسي.
+        </li>
+      </ul>
+    </div>
+  </article>
+</BaseLayout>

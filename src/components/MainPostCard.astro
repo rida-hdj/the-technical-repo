@@ -1,0 +1,53 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PostMeta from './PostMeta.astro';
+import { slugifyTag } from '../utils/slug';
+
+interface Props {
+  entry: CollectionEntry<'posts'>;
+  eager?: boolean;
+}
+
+const { entry, eager = false } = Astro.props;
+const { title, description, image, pubDate, tags } = entry.data;
+const href = `/posts/${entry.id}`;
+---
+
+<article class="post-card main-post-card">
+  {image && (
+    <a class="post-card-title-link" href={href} tabindex="-1" aria-hidden="true">
+      <div class="cover">
+        <img
+          src={image}
+          alt={title}
+          loading={eager ? 'eager' : 'lazy'}
+          decoding="async"
+        />
+      </div>
+    </a>
+  )}
+  <div class="post-card-body">
+    <span class="badge badge--accent card-type-badge">مقال رئيسي</span>
+    <h2 class="post-card-title">
+      <a class="post-card-title-link" href={href}>{title}</a>
+    </h2>
+    <p class="post-card-desc">{description}</p>
+    <div class="post-card-footer">
+      <PostMeta date={pubDate} />
+      {tags.length > 0 && (
+        <ul class="tag-list">
+          {tags.map((tag) => (
+            <li>
+              <a
+                class="badge tag-link"
+                href={`/tags/${encodeURIComponent(slugifyTag(tag))}`}
+              >
+                #{tag}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </div>
+</article>

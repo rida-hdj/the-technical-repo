@@ -1,0 +1,299 @@
+---
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath } = Astro.props;
+
+const nav = [
+  { href: '/', label: 'الرئيسية' },
+  { href: '/blog/', label: 'المدونة' },
+  { href: '/about/', label: 'حول' },
+];
+const isActive = (href: string) =>
+  href === '/' ? currentPath === '/' : currentPath?.startsWith(href);
+---
+
+<header class="site-header">
+  <div class="container site-header-inner">
+    <a class="site-brand" href="/" aria-label="المستودع التقني — الصفحة الرئيسية">
+      <img class="brand-mark" src="/logo.png" alt="" width="256" height="256" />
+      المستودع التقني
+    </a>
+
+    <nav class="site-nav" aria-label="التنقل الرئيسي">
+      {nav.map((item) => (
+        <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <form
+      class="header-search"
+      role="search"
+      aria-label="بحث في المدونة"
+      data-search-form
+    >
+      <svg
+        class="search-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="11" cy="11" r="7"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input
+        type="search"
+        name="q"
+        placeholder="ابحث في المدونة..."
+        aria-label="بحث في المدونة"
+        aria-controls="search-results"
+        autocomplete="off"
+        data-search-input
+      />
+      <button
+        class="search-clear"
+        type="button"
+        data-search-clear
+        aria-label="مسح البحث"
+        hidden
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div
+        class="search-results"
+        id="search-results"
+        role="listbox"
+        aria-label="نتائج البحث"
+        hidden
+      ></div>
+    </form>
+
+    <div class="header-actions">
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="تبديل المظهر (فاتح / داكن)">
+        <svg
+          class="icon-sun"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="4"></circle>
+          <line x1="12" y1="2" x2="12" y2="5"></line>
+          <line x1="12" y1="19" x2="12" y2="22"></line>
+          <line x1="2" y1="12" x2="5" y2="12"></line>
+          <line x1="19" y1="12" x2="22" y2="12"></line>
+          <line x1="4.9" y1="4.9" x2="7" y2="7"></line>
+          <line x1="17" y1="17" x2="19.1" y2="19.1"></line>
+          <line x1="4.9" y1="19.1" x2="7" y2="17"></line>
+          <line x1="17" y1="7" x2="19.1" y2="4.9"></line>
+        </svg>
+        <svg
+          class="icon-moon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
+    const root = document.documentElement;
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try {
+      localStorage.setItem('theme', next);
+    } catch {
+      /* private mode */
+    }
+  });
+</script>
+
+<script>
+  import { searchPosts, highlightHtml } from '../utils/search';
+  import { formatDate } from '../utils/date';
+
+  function initSearch(): void {
+    const container = document.getElementById('search-index-data');
+    if (!container) return;
+
+    const index = JSON.parse(container.textContent || '[]');
+    const form = document.querySelector('[data-search-form]');
+    const input = form?.querySelector<HTMLInputElement>('[data-search-input]');
+    const clear = form?.querySelector<HTMLElement>('[data-search-clear]');
+    const results = document.getElementById('search-results');
+    if (!container || !form || !input || !clear || !results) return;
+
+    let activeIndex = -1;
+
+    const viewportPad = 16;
+    const maxPanelWidth = 416;
+    const desktopLayout = window.matchMedia('(min-width: 921px)');
+
+    const resetPanelStyles = () => {
+      results.style.removeProperty('left');
+      results.style.removeProperty('top');
+      results.style.removeProperty('width');
+      results.style.removeProperty('inset-inline-start');
+      results.style.removeProperty('inset-block-start');
+    };
+
+    const positionPanel = () => {
+      if (!desktopLayout.matches) {
+        resetPanelStyles();
+        return;
+      }
+      const formRect = form.getBoundingClientRect();
+      const width = Math.min(
+        maxPanelWidth,
+        window.innerWidth - viewportPad * 2,
+      );
+      let left = form.getBoundingClientRect().right - width;
+      const minLeft = viewportPad;
+      const maxLeft = window.innerWidth - viewportPad - width;
+      left = Math.max(minLeft, Math.min(left, maxLeft));
+      results.style.left = `${left - formRect.left}px`;
+      results.style.width = `${width}px`;
+      results.style.insetInlineStart = 'auto';
+    };
+
+    const badgeText = (type: string) =>
+      type === 'main' ? 'مقال رئيسي' : 'مقال قصير';
+
+    const resultItems = () =>
+      [
+        ...results.querySelectorAll<HTMLAnchorElement>(
+          '[data-search-result]',
+        ),
+      ];
+
+    const setActive = (idx: number) => {
+      const items = resultItems();
+      activeIndex = idx;
+      items.forEach((el, i) =>
+        el.classList.toggle('search-result-active', i === idx),
+      );
+      items[idx]?.scrollIntoView({ block: 'nearest' });
+    };
+
+    const render = (value: string) => {
+      if (!value.trim()) {
+        results.hidden = true;
+        results.innerHTML = '';
+        form.setAttribute('aria-expanded', 'false');
+        activeIndex = -1;
+        return;
+      }
+
+      const matches = searchPosts(index, value);
+
+      if (matches.length === 0) {
+        results.innerHTML =
+          '<p class="search-results-empty">لم يتم العثور على مقالات مطابقة لبحثك.</p>';
+      } else {
+        results.innerHTML = matches
+          .map(
+            (entry) => `<a class="search-result" href="/posts/${entry.id}" role="option" data-search-result>
+        <span class="search-result-title">${highlightHtml(entry.title, value)}</span>
+        ${
+          entry.description.trim()
+            ? `<span class="search-result-desc">${highlightHtml(
+                entry.description,
+                value,
+              )}</span>`
+            : ''
+        }
+        <span class="search-result-meta">
+          <span class="badge badge--accent">${badgeText(entry.type)}</span>
+          <span class="search-result-date">${formatDate(
+            new Date(entry.pubDate),
+          )}</span>
+        </span>
+      </a>`,
+          )
+          .join('');
+        activeIndex = -1;
+      }
+
+      results.hidden = false;
+      form.setAttribute('aria-expanded', 'true');
+      positionPanel();
+    };
+
+    input.addEventListener('input', () => {
+      clear.hidden = input.value.length === 0;
+      render(input.value);
+    });
+
+    clear.addEventListener('click', () => {
+      input.value = '';
+      clear.hidden = true;
+      render('');
+      input.focus();
+    });
+
+    form.addEventListener('submit', (event) => event.preventDefault());
+
+    window.addEventListener('resize', positionPanel);
+
+    document.addEventListener('click', (event) => {
+      if (!form.contains(event.target as Node)) {
+        results.hidden = true;
+        form.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    input.addEventListener('keydown', (event) => {
+      const items = resultItems();
+      if (event.key === 'Escape') {
+        results.hidden = true;
+        form.setAttribute('aria-expanded', 'false');
+        input.blur();
+        return;
+      }
+      if (event.key === 'ArrowDown' && items.length > 0) {
+        event.preventDefault();
+        setActive(activeIndex < items.length - 1 ? activeIndex + 1 : activeIndex);
+      } else if (event.key === 'ArrowUp' && items.length > 0) {
+        event.preventDefault();
+        setActive(activeIndex > 0 ? activeIndex - 1 : activeIndex);
+      } else if (event.key === 'Enter' && !results.hidden) {
+        const active = items[activeIndex] ?? items[0];
+        if (active) {
+          event.preventDefault();
+          window.location.href = active.getAttribute('href') ?? '/';
+        }
+      }
+    });
+  }
+
+  initSearch();
+</script>

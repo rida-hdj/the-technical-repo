@@ -1,0 +1,43 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PostMeta from './PostMeta.astro';
+
+interface Props {
+  entry: CollectionEntry<'posts'>;
+  parent?: CollectionEntry<'posts'> | undefined;
+  showImage?: boolean;
+}
+
+const { entry, parent, showImage = false } = Astro.props;
+const { title, description, image, pubDate } = entry.data;
+const href = `/posts/${entry.id}`;
+const parentHref = parent ? `/posts/${parent.id}` : undefined;
+---
+
+<article class="post-card">
+  {showImage && image && (
+    <a class="post-card-title-link" href={href} tabindex="-1" aria-hidden="true">
+      <div class="cover cover--small">
+        <img src={image} alt={title} loading="lazy" decoding="async" />
+      </div>
+    </a>
+  )}
+  <div class="post-card-body">
+    <span class="badge badge--accent card-type-badge">مقال قصير</span>
+    <h3 class="post-card-title">
+      <a class="post-card-title-link" href={href}>{title}</a>
+    </h3>
+    <p class="post-card-desc">{description}</p>
+    <div class="post-card-footer">
+      <PostMeta date={pubDate} />
+      <p class="parent-note">
+        <span>جزء من:</span>
+        {parentHref ? (
+          <a href={parentHref}>{parent!.data.title}</a>
+        ) : (
+          <span>{entry.data.parent ?? 'مقال رئيسي'}</span>
+        )}
+      </p>
+    </div>
+  </div>
+</article>

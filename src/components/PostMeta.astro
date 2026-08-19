@@ -1,0 +1,13 @@
+---
+import { formatDate } from '../utils/date';
+
+interface Props {
+  date: Date;
+}
+
+const { date } = Astro.props;
+---
+
+<div class="post-meta">
+  <time datetime={date.toISOString()}>{formatDate(date)}</time>
+</div>

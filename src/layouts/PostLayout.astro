@@ -1,0 +1,110 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import PostMeta from '../components/PostMeta.astro';
+import SmallPostCard from '../components/SmallPostCard.astro';
+import { slugifyTag } from '../utils/slug';
+
+export interface RelatedItem {
+  entry: CollectionEntry<'posts'>;
+  parent?: CollectionEntry<'posts'>;
+}
+
+interface Props {
+  entry: CollectionEntry<'posts'>;
+  parent?: CollectionEntry<'posts'>;
+  related?: RelatedItem[];
+}
+
+const { entry, parent, related = [] } = Astro.props;
+const { title, author, authorGithub, description, image, pubDate, tags, type } =
+  entry.data;
+const isMain = type === 'main';
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image={image}
+  currentPath={`/posts/${entry.id}`}
+>
+  <article class="article">
+    <div class="article-header">
+      <span class="badge badge--accent card-type-badge">
+        {isMain ? 'مقال رئيسي' : 'مقال قصير'}
+      </span>
+      <h1>{title}</h1>
+      <p class="article-description">{description}</p>
+      <div class="article-meta-row">
+        <p class="post-author">
+          <a
+            class="author-link"
+            href={`https://github.com/${authorGithub}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            dir="auto"
+          >
+            <svg
+              class="author-icon"
+              viewBox="0 0 16 16"
+              aria-hidden="true"
+              fill="currentColor"
+            >
+              <path
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"
+              />
+            </svg>
+            {author}
+          </a>
+        </p>
+        <PostMeta date={pubDate} />
+      </div>
+
+      {tags.length > 0 && (
+        <ul class="tag-list" style="margin-top: 0.9rem">
+          {tags.map((tag) => (
+            <li>
+              <a
+                class="badge tag-link"
+                href={`/tags/${encodeURIComponent(slugifyTag(tag))}`}
+              >
+                #{tag}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+
+    {!isMain && parent && (
+      <div class="parent-box">
+        <span class="arrow" aria-hidden="true">⟵</span>
+        <span>هذا المقال جزء من:</span>
+        <strong>
+          <a href={`/posts/${parent.id}`}>{parent.data.title}</a>
+        </strong>
+      </div>
+    )}
+
+    {image && (
+      <div class="article-cover">
+        <img src={image} alt={title} loading="eager" decoding="async" />
+      </div>
+    )}
+
+    <div class="prose">
+      <slot />
+    </div>
+
+    {isMain && related.length > 0 && (
+      <section class="related" aria-label="مقالات ذات صلة">
+        <h2>مقالات ذات صلة</h2>
+        <div class="related-grid">
+          {related.map((item) => (
+            <SmallPostCard entry={item.entry} parent={item.parent} showImage />
+          ))}
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>

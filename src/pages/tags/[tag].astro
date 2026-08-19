@@ -1,0 +1,114 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MainPostCard from '../../components/MainPostCard.astro';
+import SmallPostCard from '../../components/SmallPostCard.astro';
+import { slugifyTag } from '../../utils/slug';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+
+  const byTag = new Map<string, CollectionEntry<'posts'>[]>();
+  for (const post of posts) {
+    for (const tag of post.data.tags) {
+      const list = byTag.get(tag) ?? [];
+      list.push(post);
+      byTag.set(tag, list);
+    }
+  }
+
+  const slugToLabel = new Map<string, string>();
+  for (const label of byTag.keys()) {
+    const base = slugifyTag(label);
+    let slug = base;
+    let n = 1;
+    while (slugToLabel.has(slug)) {
+      n += 1;
+      slug = `${base}-${n}`;
+    }
+    slugToLabel.set(slug, label);
+  }
+
+  return [...slugToLabel.entries()].map(([slug, label]) => {
+    const matches = (byTag.get(label) ?? []).sort(
+      (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+    );
+    return {
+      params: { tag: slug },
+      props: { tagLabel: label, posts: matches },
+    };
+  });
+}
+
+interface Props {
+  tagLabel: string;
+  posts: CollectionEntry<'posts'>[];
+}
+
+interface SmallWithParent {
+  entry: CollectionEntry<'posts'>;
+  parent?: CollectionEntry<'posts'>;
+}
+
+const { tagLabel, posts } = Astro.props;
+
+const mainPosts = posts.filter((p) => p.data.type === 'main');
+const smallPosts = posts.filter((p) => p.data.type === 'small');
+
+const smallWithParent: SmallWithParent[] = [];
+for (const entry of smallPosts) {
+  const parent = entry.data.parent
+    ? await getEntry('posts', entry.data.parent)
+    : undefined;
+  if (parent && !parent.data.draft) {
+    smallWithParent.push({ entry, parent });
+  }
+}
+---
+
+<BaseLayout
+  title={`مقالات: ${tagLabel}`}
+  description={`مقالات المستودع التقني عن «${tagLabel}».`}
+  currentPath={Astro.url.pathname}
+>
+  <section class="container section page-top">
+    <div class="list-head">
+      <h1>مقالات: {tagLabel}</h1>
+    </div>
+
+    {posts.length === 0 ? (
+      <div class="empty-state">
+        <p>لا توجد مقالات مطابقة لهذا الوسم بعد.</p>
+      </div>
+    ) : (
+      <div class="blog-layout">
+        {mainPosts.length > 0 && (
+          <section>
+            <div class="section-header">
+              <h2 class="section-title-muted">مقالات رئيسية</h2>
+            </div>
+            <div class="main-post-grid">
+              {mainPosts.map((entry) => (
+                <MainPostCard entry={entry} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {smallWithParent.length > 0 && (
+          <section>
+            <div class="section-header">
+              <h2 class="section-title-muted">مقالات قصيرة</h2>
+            </div>
+            <div class="post-grid">
+              {smallWithParent.map(({ entry, parent }) => (
+                <SmallPostCard entry={entry} parent={parent} showImage />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    )}
+  </section>
+</BaseLayout>

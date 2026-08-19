@@ -1,0 +1,75 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MainPostCard from '../../components/MainPostCard.astro';
+import SmallPostCard from '../../components/SmallPostCard.astro';
+
+const pathname = Astro.url.pathname;
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const mainPosts = posts.filter((p) => p.data.type === 'main');
+const smallPosts = posts.filter((p) => p.data.type === 'small');
+
+interface SmallWithParent {
+  entry: CollectionEntry<'posts'>;
+  parent?: CollectionEntry<'posts'>;
+}
+
+const smallWithParent: SmallWithParent[] = [];
+for (const entry of smallPosts) {
+  const parent = entry.data.parent
+    ? await getEntry('posts', entry.data.parent)
+    : undefined;
+  if (parent && !parent.data.draft) {
+    smallWithParent.push({ entry, parent });
+  }
+}
+---
+
+<BaseLayout
+  title="المدونة"
+  description="جميع مقالات المستودع التقني."
+  currentPath={pathname}
+>
+  <section class="container section page-top">
+    <div class="list-head">
+      <h1>المدونة</h1>
+    </div>
+
+    <div class="blog-layout">
+      <section>
+        <div class="section-header">
+          <h2 class="section-title-muted">مقالات رئيسية</h2>
+        </div>
+        {mainPosts.length > 0 ? (
+          <div class="main-post-grid">
+            {mainPosts.map((entry) => (
+              <MainPostCard entry={entry} />
+            ))}
+          </div>
+        ) : (
+          <p>لا توجد مقالات رئيسية بعد.</p>
+        )}
+      </section>
+
+      <section>
+        <div class="section-header">
+          <h2 class="section-title-muted">مقالات قصيرة</h2>
+        </div>
+        {smallWithParent.length > 0 ? (
+          <div class="post-grid">
+            {smallWithParent.map(({ entry, parent }) => (
+              <SmallPostCard entry={entry} parent={parent} showImage />
+            ))}
+          </div>
+        ) : (
+          <p>لا توجد مقالات قصيرة بعد.</p>
+        )}
+      </section>
+    </div>
+  </section>
+</BaseLayout>

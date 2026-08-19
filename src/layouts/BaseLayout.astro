@@ -1,0 +1,94 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getCollection } from 'astro:content';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  currentPath?: string;
+}
+
+const {
+  title,
+  description = 'المستودع التقني — مدوّنة تقنية عن لينكس والبرمجيات مفتوحة المصدر والبرمجة.',
+  image,
+  currentPath,
+} = Astro.props;
+
+const pageTitle = title ? `${title} — المستودع التقني` : 'المستودع التقني';
+
+const searchIndex = (await getCollection('posts', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .map((post) => ({
+    id: post.id,
+    title: post.data.title,
+    description: post.data.description,
+    type: post.data.type,
+    tags: post.data.tags,
+    pubDate: post.data.pubDate.toISOString(),
+    parent: post.data.parent ?? null,
+  }));
+
+const searchIndexJson = JSON.stringify(searchIndex).replace(/</g, '\\u003c');
+---
+
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content="المستودع التقني" />
+    {image && <meta property="og:image" content={image} />}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="canonical" href={Astro.url.pathname} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        var stored = null;
+        try {
+          stored = localStorage.getItem('theme');
+        } catch (e) {}
+        var theme =
+          stored ||
+          (window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light');
+        root.dataset.theme = theme;
+      })();
+    </script>
+  <script
+      type="application/json"
+      id="search-index-data"
+      is:inline
+      set:html={searchIndexJson}
+    ></script>
+  </head>
+  <body>
+    <Header currentPath={currentPath} />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

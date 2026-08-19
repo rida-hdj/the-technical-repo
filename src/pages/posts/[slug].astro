@@ -1,0 +1,41 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection, getEntry, render } from 'astro:content';
+import type { RelatedItem } from '../../layouts/PostLayout.astro';
+import PostLayout from '../../layouts/PostLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'posts'>;
+}
+
+const { entry } = Astro.props;
+const { type } = entry.data;
+
+const parent =
+  type === 'small' && entry.data.parent
+    ? await getEntry('posts', entry.data.parent)
+    : undefined;
+
+const related: RelatedItem[] =
+  type === 'main'
+    ? (await getCollection('posts', ({ data }) => !data.draft))
+        .filter((p) => p.data.type === 'small')
+        .filter((p) => p.data.parent === entry.id)
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+        .map((p) => ({ entry: p, parent: entry }))
+    : [];
+
+const { Content } = await render(entry);
+---
+
+<PostLayout entry={entry} parent={parent} related={related}>
+  <Content />
+</PostLayout>
