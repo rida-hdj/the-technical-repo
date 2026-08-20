@@ -1078,6 +1078,14 @@ html[data-theme='dark'] .prose code:not(pre code) {
 /* 14. Responsive header --------------------------------------------------- */
 
 @media (max-width: 920px) {
+  .site-header {
+    transition: transform 0.25s ease;
+  }
+
+  .site-header.site-header--hidden {
+    transform: translateY(-100%);
+  }
+
   .site-header-inner {
     display: grid;
     grid-template-columns: 1fr auto;

@@ -129,6 +129,61 @@ const isActive = (href: string) => {
 </header>
 
 <script>
+  (() => {
+    const header = document.querySelector('.site-header');
+    if (!header) return;
+
+    const mobile = window.matchMedia('(max-width: 920px)');
+    const HIDE_AFTER = 100;
+    const RESHOW_ON_UP = 12;
+
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    const resultsOpen = () => {
+      const results = document.getElementById('search-results');
+      return results ? !results.hasAttribute('hidden') : false;
+    };
+
+    const show = () => header.classList.remove('site-header--hidden');
+    const hide = () => header.classList.add('site-header--hidden');
+
+    const onScroll = () => {
+      const y = window.scrollY;
+      const delta = y - lastY;
+      lastY = y;
+      ticking = false;
+
+      if (!mobile.matches) {
+        show();
+        return;
+      }
+      if (y < HIDE_AFTER || resultsOpen()) {
+        show();
+        return;
+      }
+      if (delta > RESHOW_ON_UP) hide();
+      else if (delta < -RESHOW_ON_UP) show();
+    };
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(onScroll);
+        }
+      },
+      { passive: true },
+    );
+
+    document
+      .querySelector('[data-search-input]')
+      ?.addEventListener('focus', show);
+  })();
+</script>
+
+<script>
   document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
     const root = document.documentElement;
     const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
