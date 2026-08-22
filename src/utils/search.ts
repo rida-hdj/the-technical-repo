@@ -5,7 +5,6 @@ export interface SearchEntry {
   type: 'main' | 'small';
   tags: string[];
   pubDate: string;
-  parent: string | null;
 }
 
 export interface SearchResult {

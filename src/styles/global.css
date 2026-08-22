@@ -507,6 +507,10 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   outline-offset: 2px;
 }
 
+.tag-list--article {
+  margin-top: 0.9rem;
+}
+
 /* 5. Hero ---------------------------------------------------------------- */
 
 .hero {
@@ -992,7 +996,63 @@ html[data-theme='dark'] .prose code:not(pre code) {
   padding-top: 4.25rem;
 }
 
-/* 12. Footer ------------------------------------------------------------- */
+/* 12. Article navigation ------------------------------------------------- */
+
+.article-nav {
+  max-width: var(--measure);
+  margin: 2.5rem 0 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.article-nav--single {
+  grid-template-columns: 1fr;
+}
+
+.article-nav-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-decoration: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.article-nav-link:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.article-nav-next {
+  text-align: end;
+}
+
+.article-nav-prev {
+  text-align: start;
+}
+
+.article-nav-label {
+  font-size: 0.78rem;
+  color: var(--text-faint);
+  font-weight: 500;
+}
+
+.article-nav-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  overflow-wrap: break-word;
+}
+
+.article-nav-link:hover .article-nav-title {
+  color: var(--accent);
+}
+
+/* 13. Footer ------------------------------------------------------------- */
 
 .site-footer {
   border-top: 1px solid var(--border);

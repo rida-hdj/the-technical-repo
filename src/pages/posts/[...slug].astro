@@ -1,0 +1,56 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection, render } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+import {
+  buildRelationshipMap,
+  resolveParentForSmallPost,
+  getRelatedItems,
+} from '../../utils/articles';
+import type { RelatedItem } from '../../utils/articles';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'posts'>;
+}
+
+const { entry } = Astro.props;
+const { type } = entry.data;
+
+const parent =
+  type === 'small' ? await resolveParentForSmallPost(entry) : undefined;
+
+const related: RelatedItem[] =
+  type === 'main' ? await getRelatedItems(entry) : [];
+
+let prev: CollectionEntry<'posts'> | undefined;
+let next: CollectionEntry<'posts'> | undefined;
+
+if (type === 'small') {
+  const relMap = await buildRelationshipMap();
+  const rel = relMap.get(entry.id);
+  if (rel) {
+    prev = rel.prev;
+    next = rel.next;
+  }
+}
+
+const { Content } = await render(entry);
+---
+
+<PostLayout
+  entry={entry}
+  parent={parent}
+  related={related}
+  prev={prev}
+  next={next}
+>
+  <Content />
+</PostLayout>

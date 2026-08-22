@@ -18,47 +18,98 @@
 
 ## 2. مكان المقال
 
-ضع ملف المقال في المجلد المناسب داخل `src/content/posts/`:
+### مقال رئيسي
 
-| نوع المقال | الوصف | المكان |
-|---|---|---|
-| **رئيسي** (`main`) | مقال موسّع وشامل | `src/content/posts/main/` |
-| **قصير** (`small`) | مقال مركز يشرح فكرة واحدة | `src/content/posts/small/` |
-
-اسم الملف هو أيضًا معرف المقال في الرابط، مثال:
+ضع ملف المقال في `src/content/posts/main/`:
 
 ```text
-src/content/posts/main/introduction-to-linux.md
-→ /the-technical-repo/posts/introduction-to-linux
+src/content/posts/main/my-article.md
+```
+
+### مقال قصير
+
+المقالات القصيرة مرتبطة بمقال رئيسي. كل مجموعة قصيرة لها مجلد خاص بها
+يحمل slug المقال الرئيسي:
+
+```text
+src/content/posts/small/{slug-of-main-article}/
+```
+
+مثلاً لمقال رئيسي بعنوان "كيف يعمل الحاسوب" (`how-a-computer-work`):
+
+```text
+src/content/posts/small/how-a-computer-work/
+├── 1.md
+├── 2.md
+└── 3.md
 ```
 
 ---
 
 ## 3. بنية ملف المقال
 
-كل مقال هو ملف Markdown يبدأ ب (Frontmatter) تحدد بياناته:
+### المقال الرئيسي
 
 ```yaml
 ---
-title: "مقدمة إلى لينكس"
+title: "كيف يعمل الحاسوب"
 author: "اسمك الأول"
 authorGithub: "your-github-username"
-description: "شرح موجز عن محتوى المقال."
+description: "مقدمة الى كيف يعمل الحاسوب"
 type: "main"
-او
-type: "small"
-اذا كان مقال قصير يجب اضافة رابط مع المقال الاساسي
-parent: "مقدمة الى لينيكس"
-pubDate: 2026-08-19
-image: "/images/introduction-to-linux.png"
+small: "how-a-computer-work"    # slug مجلد المقالات القصيرة (اختياري)
+pubDate: 2026-08-20
 tags:
-  - لينكس
-  - مفتوح المصدر
+  - الحاسوب
+  - العتاد
+image: "/images/computer.jpg"
 ---
 ```
 
-ثم تكتب محتوى المقال هنا بصيغة Markdown العادية.
-يفضل كتابة المقال بمحرر ماركداون للتأكد من تنسيقه
+| الحقل | الوصف |
+|---|---|
+| `title` | عنوان المقال |
+| `author` | اسم الكاتب |
+| `authorGithub` | اسم المستخدم على GitHub |
+| `description` | وصف موجز للمقال |
+| `type` |固定 `main` |
+| `small` | slug مجلد المقالات القصيرة المرتبطة (اختياري) |
+| `pubDate` | تاريخ النشر |
+| `tags` | وسوم المقال |
+| `image` | مسار الصورة (اختياري) |
+
+### المقال القصير
+
+```yaml
+---
+title: "ما هو المعالج؟"
+author: "اسمك الأول"
+authorGithub: "your-github-username"
+description: "شرح مفصل لما هو المعالج ودوره في الحاسوب"
+type: "small"
+order: 1
+pubDate: 2026-08-20
+tags:
+  - الحاسوب
+  - العتاد
+image: ""
+---
+```
+
+| الحقل | الوصف |
+|---|---|
+| `title` | عنوان المقال |
+| `author` | اسم الكاتب |
+| `authorGithub` | اسم المستخدم على GitHub |
+| `description` | وصف موجز للمقال |
+| `type` |固定 `small` |
+| `order` | رقم الترتيب داخل المجموعة (يجب أن يكون رقمًا موجبًا فريدًا) |
+| `pubDate` | تاريخ النشر |
+| `tags` | وسوم المقال |
+| `image` | مسار الصورة (اختياري) |
+
+> **مهم:** لا يُستخدم حقل `parent` بعد الآن. العلاقة تُستنتج تلقائيًا
+> من موقع الملف داخل `small/{slug}/`.
 
 ---
 
@@ -70,45 +121,106 @@ tags:
 2. ضع الملف في مجلد الصور العام:
 
    ```text
-   public/images/introduction-to-linux.png
+   public/images/my-article.png
    ```
 
 3. أشر إلى الصورة في المقدمة (Frontmatter) بمسارها المبدئي بـ `/`:
 
    ```yaml
-   image: "/images/introduction-to-linux.png"
+   image: "/images/my-article.png"
    ```
 
 إذا لم ترد صورة، احذف سطر `image` تمامًا أو اتركه فارغًا `""`.
 
 ---
 
-## 5. مثال كامل لمقال قصير يرتبط بمقال رئيسي
+## 5. مثال: إضافة مجموعة مقالات قصيرة
 
-المقالات القصيرة يمكنها الارتباط بمقال رئيسي عبر حقل `parent` (اختياري):
+لنفترض أن لديك مقالًا رئيسيًا بعنوان "مقدمة إلى لينكس" (`introduction-to-linux`):
+
+### الخطوة 1: أضف المقال الرئيسي
+
+```text
+src/content/posts/main/introduction-to-linux.md
+```
 
 ```yaml
 ---
-title: "إدارة الحزم في لينكس"
+title: "مقدمة إلى لينكس"
 author: "اسمك الأول"
 authorGithub: "your-github-username"
-description: "شرح موجز عن مديري الحزم وأساسيات استخدامهم."
-type: "small"
-parent: "introduction-to-linux"
-pubDate: 2026-08-19
-image: "/images/package-management.png"
+description: "مقدمة شاملة لنظام لينكس"
+type: "main"
+small: "introduction-to-linux"
+pubDate: 2026-08-20
 tags:
   - لينكس
-  - إدارة الحزم
+  - مفتوح المصدر
 ---
 ```
 
-يُوضع هذا الملف في `src/content/posts/small/` وسيظهر تلقائيًا في قسم
-«مقالات ذات صلة» للمقال الرئيسي.
+### الخطوة 2: أنشئ مجلد المقالات القصيرة
+
+```text
+src/content/posts/small/introduction-to-linux/
+```
+
+### الخطوة 3: أضف المقالات القصيرة مع ترتيب
+
+```text
+src/content/posts/small/introduction-to-linux/1.md
+```
+
+```yaml
+---
+title: "ما هو لينكس؟"
+author: "اسمك الأول"
+authorGithub: "your-github-username"
+description: "تعريف نظام لينكس وتاريخه"
+type: "small"
+order: 1
+pubDate: 2026-08-20
+tags:
+  - لينكس
+---
+```
+
+```text
+src/content/posts/small/introduction-to-linux/2.md
+```
+
+```yaml
+---
+title: "توزيعات لينكس"
+author: "اسمك الأول"
+authorGithub: "your-github-username"
+description: "شرح أشهر توزيعات لينكس"
+type: "small"
+order: 2
+pubDate: 2026-08-20
+tags:
+  - لينكس
+---
+```
+
+### التنقل بين المقالات القصيرة
+
+- المقال الرئيسي ي link إلى أول مقال قصير.
+- المقال القصير رقم 1 ي link إلى رقم 2.
+- المقال القصير الأخير ي link إلى رقم السابق فقط.
 
 ---
 
-## 6. الاختبار محليًا قبل الإرسال
+## 6. قواعد الترتيب والتحقق
+
+- `order` يجب أن يكون **رقمًا موجبًا** (0 مسموح).
+- لا يجب تكرار أرقام الترتيب داخل مجموعة واحدة.
+- إذا نشرت مقالًا قصيرًا بدون `order`، ستحذير في سجلات البناء.
+- إذا أشرت إلى مجلد قصير غير موجود، ستحذير في سجلات البناء.
+
+---
+
+## 7. الاختبار محليًا قبل الإرسال
 
 ```sh
 npm install       # تثبيت الاعتماديات (أول مرة فقط)
@@ -117,7 +229,9 @@ npm run dev       # تشغيل الخادم المحلي على http://localhost
 
 تأكد من أن:
 
-- صفحة المقال تعمل على `http://localhost:4321/the-technical-repo/posts/اسم-الملف/`.
+- صفحة المقال تعمل بشكل صحيح.
+- المقالات القصيرة مرتبطة بالمقال الرئيسي.
+- التنقل السابق/التالي يعمل في المقالات القصيرة.
 - الصورة تظهر بشكل صحيح.
 
 > ملاحظة: بسبب إعداد `base` في `astro.config.mjs`، تبدأ جميع الروابط المحلية
@@ -128,13 +242,14 @@ npm run dev       # تشغيل الخادم المحلي على http://localhost
 
 ```sh
 npm run build
+npm run astro check
 ```
 
 يجب أن يكتمل البناء بدون أخطاء.
 
 ---
 
-## 7. خطوات إرسال المقال عبر GitHub
+## 8. خطوات إرسال المقال عبر GitHub
 
 1. انسخ المستودع (Fork) ثم استنسخه محليًا.
 2. أنشئ فرعًا جديدًا، مثل: `add-post-introduction-to-linux`.
@@ -143,4 +258,3 @@ npm run build
 5. افتح **Pull Request** إلى فرع `main` مع وصف موجز للمقال.
 6. بعد مراجعة المقال ودمجه، ستظهر صفحته تلقائيًا بعد البناء — دون أي تعديلات
    أخرى.
-

@@ -5,7 +5,7 @@ import { url } from '../utils/url';
 
 interface Props {
   entry: CollectionEntry<'posts'>;
-  parent?: CollectionEntry<'posts'> | undefined;
+  parent?: CollectionEntry<'posts'>;
   showImage?: boolean;
 }
 
@@ -36,7 +36,7 @@ const parentHref = parent ? url(`/posts/${parent.id}`) : undefined;
         {parentHref ? (
           <a href={parentHref}>{parent!.data.title}</a>
         ) : (
-          <span>{entry.data.parent ?? 'مقال رئيسي'}</span>
+          <span>مقال رئيسي</span>
         )}
       </p>
     </div>

@@ -5,22 +5,22 @@ import PostMeta from '../components/PostMeta.astro';
 import SmallPostCard from '../components/SmallPostCard.astro';
 import { slugifyTag } from '../utils/slug';
 import { url } from '../utils/url';
-
-export interface RelatedItem {
-  entry: CollectionEntry<'posts'>;
-  parent?: CollectionEntry<'posts'>;
-}
+import type { RelatedItem } from '../utils/articles';
 
 interface Props {
   entry: CollectionEntry<'posts'>;
   parent?: CollectionEntry<'posts'>;
   related?: RelatedItem[];
+  prev?: CollectionEntry<'posts'>;
+  next?: CollectionEntry<'posts'>;
 }
 
-const { entry, parent, related = [] } = Astro.props;
+const { entry, parent, related = [], prev, next } = Astro.props;
 const { title, author, authorGithub, description, image, pubDate, tags, type } =
   entry.data;
 const isMain = type === 'main';
+const hasNav = prev || next;
+const singleNav = (prev && !next) || (!prev && next);
 ---
 
 <BaseLayout
@@ -62,7 +62,7 @@ const isMain = type === 'main';
       </div>
 
       {tags.length > 0 && (
-        <ul class="tag-list" style="margin-top: 0.9rem">
+        <ul class="tag-list tag-list--article">
           {tags.map((tag) => (
             <li>
               <a
@@ -96,6 +96,23 @@ const isMain = type === 'main';
     <div class="prose">
       <slot />
     </div>
+
+    {hasNav && (
+      <nav class:list={['article-nav', { 'article-nav--single': singleNav }]} aria-label="تنقل بين المقالات">
+        {prev && (
+          <a class="article-nav-link article-nav-prev" href={url(`/posts/${prev.id}`)}>
+            <span class="article-nav-label">المقال السابق</span>
+            <span class="article-nav-title">{prev.data.title}</span>
+          </a>
+        )}
+        {next && (
+          <a class="article-nav-link article-nav-next" href={url(`/posts/${next.id}`)}>
+            <span class="article-nav-label">المقال التالي</span>
+            <span class="article-nav-title">{next.data.title}</span>
+          </a>
+        )}
+      </nav>
+    )}
 
     {isMain && related.length > 0 && (
       <section class="related" aria-label="مقالات ذات صلة">

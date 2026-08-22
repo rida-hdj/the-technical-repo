@@ -33,7 +33,6 @@ const searchIndex = (await getCollection('posts', ({ data }) => !data.draft))
     type: post.data.type,
     tags: post.data.tags,
     pubDate: post.data.pubDate.toISOString(),
-    parent: post.data.parent ?? null,
   }));
 
 const searchIndexJson = JSON.stringify(searchIndex).replace(/</g, '\\u003c');

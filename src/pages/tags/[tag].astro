@@ -1,10 +1,11 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { getCollection, getEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MainPostCard from '../../components/MainPostCard.astro';
 import SmallPostCard from '../../components/SmallPostCard.astro';
 import { slugifyTag } from '../../utils/slug';
+import { resolveSmallPosts } from '../../utils/articles';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts', ({ data }) => !data.draft);
@@ -46,25 +47,11 @@ interface Props {
   posts: CollectionEntry<'posts'>[];
 }
 
-interface SmallWithParent {
-  entry: CollectionEntry<'posts'>;
-  parent?: CollectionEntry<'posts'>;
-}
-
 const { tagLabel, posts } = Astro.props;
 
 const mainPosts = posts.filter((p) => p.data.type === 'main');
 const smallPosts = posts.filter((p) => p.data.type === 'small');
-
-const smallWithParent: SmallWithParent[] = [];
-for (const entry of smallPosts) {
-  const parent = entry.data.parent
-    ? await getEntry('posts', entry.data.parent)
-    : undefined;
-  if (parent && !parent.data.draft) {
-    smallWithParent.push({ entry, parent });
-  }
-}
+const smallWithParent = await resolveSmallPosts(smallPosts);
 ---
 
 <BaseLayout

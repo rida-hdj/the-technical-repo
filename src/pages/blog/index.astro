@@ -1,39 +1,19 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MainPostCard from '../../components/MainPostCard.astro';
 import SmallPostCard from '../../components/SmallPostCard.astro';
+import { getAllPosts, resolveSmallPosts } from '../../utils/articles';
 
-const pathname = Astro.url.pathname;
-
-const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
-
+const posts = await getAllPosts();
 const mainPosts = posts.filter((p) => p.data.type === 'main');
 const smallPosts = posts.filter((p) => p.data.type === 'small');
-
-interface SmallWithParent {
-  entry: CollectionEntry<'posts'>;
-  parent?: CollectionEntry<'posts'>;
-}
-
-const smallWithParent: SmallWithParent[] = [];
-for (const entry of smallPosts) {
-  const parent = entry.data.parent
-    ? await getEntry('posts', entry.data.parent)
-    : undefined;
-  if (parent && !parent.data.draft) {
-    smallWithParent.push({ entry, parent });
-  }
-}
+const smallWithParent = await resolveSmallPosts(smallPosts);
 ---
 
 <BaseLayout
   title="المدونة"
   description="جميع مقالات المستودع التقني."
-  currentPath={pathname}
+  currentPath={Astro.url.pathname}
 >
   <section class="container section page-top">
     <div class="list-head">
