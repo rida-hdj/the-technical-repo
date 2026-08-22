@@ -59,51 +59,6 @@ npm run astro check  # فحص الكود
 └── package.json
 ```
 
-## هيكل المحتوى
-
-### المقالات الرئيسية
-
-ملف واحد في `src/content/posts/main/`:
-
-```text
-src/content/posts/main/how-a-computer-work.md
-```
-
-البيانات الأساسية:
-
-```yaml
-title: "كيف يعمل الحاسوب"
-type: "main"
-small: "how-a-computer-work"  # يشير إلى مجلد المقالات القصيرة
-```
-
-### المقالات القصيرة
-
-مجلد في `src/content/posts/small/` يحمل نفس slug المقال الرئيسي،
-ويحتوي ملفات رقمية مرتبة بحقل `order`:
-
-```text
-src/content/posts/small/how-a-computer-work/
-├── 1.md    # order: 1
-├── 2.md    # order: 2
-└── 3.md    # order: 3
-```
-
-البيانات الأساسية:
-
-```yaml
-title: "ما هو المعالج؟"
-type: "small"
-order: 1
-```
-
-### العلاقة بين المقالات
-
-- المقال الرئيسي يشير إلى مجلد المقالات القصيرة عبر حقل `small`.
-- العلاقة تُستنتج من بنية المجلدات (لا حاجة لحقل `parent`).
-- المقالات القصيرة مرتبة بحقل `order` وليست بأسماء الملفات.
-- المقال الرئيسي يربط بأول مقال قصير، والمقالات القصيرة لها تنقل سابق/تالي.
-
 ## النشر
 
 يُبنى الموقع ويُنشر تلقائيًا عبر GitHub Actions إلى GitHub Pages على:
@@ -111,6 +66,9 @@ order: 1
 ```text
 https://rida-hdj.github.io/the-technical-repo/
 ```
+
+## المساهمة
+يمكن المساهمة من خلال [دليل المساهمة](/CONTRIBUTING.md)
 
 ## الرخص
 
