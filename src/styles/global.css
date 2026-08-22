@@ -35,8 +35,8 @@
   --shadow-md: 0 2px 8px rgba(28, 25, 23, 0.07);
 
   --measure: 44rem;
-  --radius: 10px;
-  --radius-sm: 6px;
+  --radius: 4px;
+  --radius-sm: 3px;
 
   --astro-code-foreground: #292524;
   --astro-code-background: #f4f4f5;
@@ -259,7 +259,7 @@ a:hover {
   color: var(--text);
   background: var(--surface-2);
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
@@ -294,7 +294,7 @@ a:hover {
   color: var(--text-faint);
   background: transparent;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   z-index: 1;
 }
@@ -417,7 +417,7 @@ a:hover {
   color: var(--text-muted);
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: color 0.15s ease, background-color 0.15s ease;
 }
@@ -455,7 +455,7 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   align-items: center;
   gap: 0.3rem;
   padding: 0.15rem 0.6rem;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   background: var(--surface-2);
   border: 1px solid var(--border);
   color: var(--text-muted);
@@ -1024,7 +1024,7 @@ html[data-theme='dark'] .prose code:not(pre code) {
   text-decoration: none;
   border: 1px solid var(--border);
   padding: 0.2rem 0.75rem;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   background: var(--surface-2);
   transition: background-color 0.15s ease, color 0.15s ease;
 }
