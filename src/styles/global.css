@@ -21,6 +21,11 @@
   --border: #e7e5e4;
   --border-strong: #d6d3d1;
 
+  /* Soft-brutalist border tokens */
+  --brutal-width: 1px;
+  --brutal-color: rgba(0, 0, 0, 0.1);
+  --brutal-color-strong: rgba(0, 0, 0, 0.18);
+
   --accent: #0f766e;
   --accent-strong: #115e59;
   --accent-contrast: #ffffff;
@@ -61,6 +66,10 @@ html[data-theme='dark'] {
   --text-faint: #7c7d85;
   --border: #2e2f36;
   --border-strong: #3d3e46;
+
+  /* Soft-brutalist border tokens */
+  --brutal-color: rgba(255, 255, 255, 0.08);
+  --brutal-color-strong: rgba(255, 255, 255, 0.14);
 
   --accent: #2fd3c0;
   --accent-strong: #5eead4;
@@ -159,7 +168,7 @@ a:hover {
   background: var(--header-bg);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--border);
+  border-bottom: var(--brutal-width) solid var(--border);
   overflow-x: clip;
   overflow-y: visible;
 }
@@ -258,7 +267,7 @@ a:hover {
   line-height: 1.5;
   color: var(--text);
   background: var(--surface-2);
-  border: 1px solid var(--border);
+  border: var(--brutal-width) solid var(--border-strong);
   border-radius: var(--radius-sm);
   transition: border-color 0.15s ease, background-color 0.15s ease;
 }
@@ -313,8 +322,6 @@ a:hover {
   height: 0.85rem;
 }
 
-/* Search results dropdown */
-
 .header-search .search-results {
   position: absolute;
   inset-block-start: calc(100% + 0.5rem);
@@ -325,7 +332,7 @@ a:hover {
   overflow-y: auto;
   overscroll-behavior: contain;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: var(--brutal-width) solid var(--border-strong);
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
   padding: 0.5rem;
@@ -416,7 +423,7 @@ a:hover {
   height: 2.25rem;
   color: var(--text-muted);
   background: transparent;
-  border: 1px solid var(--border);
+  border: var(--brutal-width) solid var(--border-strong);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: color 0.15s ease, background-color 0.15s ease;
@@ -457,7 +464,7 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   padding: 0.15rem 0.6rem;
   border-radius: var(--radius-sm);
   background: var(--surface-2);
-  border: 1px solid var(--border);
+  border: var(--brutal-width) solid var(--border-strong);
   color: var(--text-muted);
   font-size: 0.75rem;
   font-weight: 500;
@@ -484,7 +491,7 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
 .tag-list .badge.tag-link {
   color: var(--text-muted);
   background: var(--surface-2);
-  border: 1px solid var(--border);
+  border: var(--brutal-width) solid var(--border-strong);
   text-decoration: none;
   cursor: pointer;
   white-space: normal;
@@ -542,6 +549,8 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: var(--brutal-width) solid var(--border);
   flex-wrap: wrap;
 }
 
@@ -575,7 +584,7 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   flex-direction: column;
   min-width: 0;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: var(--brutal-width) solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
   transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
@@ -645,15 +654,13 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   font-size: 0.82rem;
 }
 
-/* Small cards indicators */
-
 .parent-note {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
   font-size: 0.8rem;
   color: var(--text-muted);
-  border-top: 1px dashed var(--border-strong);
+  border-top: var(--brutal-width) dashed var(--border-strong);
   padding-top: 0.6rem;
   margin-top: 0.2rem;
   overflow-wrap: break-word;
@@ -667,8 +674,6 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
 .card-type-badge {
   align-self: flex-start;
 }
-
-/* Cover */
 
 .cover {
   position: relative;
@@ -745,13 +750,52 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   color: var(--accent);
 }
 
+.prose li:has(input[type='checkbox']) {
+  list-style: none;
+  position: relative;
+  padding-inline-start: 0;
+}
+
+.prose li:has(input[type='checkbox']) input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+  position: relative;
+  vertical-align: middle;
+  margin-inline-end: 0.5rem;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.prose li:has(input[type='checkbox']) input[type='checkbox']:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.prose li:has(input[type='checkbox']) input[type='checkbox']:checked::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 0.35rem;
+  height: 0.55rem;
+  border: solid var(--accent-contrast);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translate(-0.5px, -0.5px);
+}
+
 .prose blockquote {
   margin: 0;
-  padding: 0.4rem 1.1rem 0.4rem 0;
+  padding: 0.4rem 1.1rem 0.4rem 1rem;
+  border: 1px solid var(--border);
   border-inline-start: 3px solid var(--accent);
   color: var(--text-muted);
   background: var(--surface-2);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  border-radius: var(--radius-sm);
 }
 
 .prose blockquote p {
@@ -760,13 +804,13 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
 
 .prose hr {
   border: none;
-  border-top: 1px solid var(--border);
+  border-top: var(--brutal-width) solid var(--border-strong);
   margin: 2.2rem 0;
 }
 
 .prose img {
   border-radius: var(--radius);
-  border: 1px solid var(--border);
+  border: var(--brutal-width) solid var(--border-strong);
 }
 
 .prose code:not(pre code) {
@@ -776,7 +820,7 @@ html[data-theme='dark'] .theme-toggle .icon-moon {
   unicode-bidi: isolate;
   overflow-wrap: anywhere;
   background: var(--code-bg);
-  border: 1px solid var(--code-border);
+  border: var(--brutal-width) solid var(--border-strong);
   color: var(--accent-strong);
   border-radius: 4px;
   padding: 0.12em 0.4em;
@@ -797,7 +841,7 @@ html[data-theme='dark'] .prose code:not(pre code) {
 
 .prose th,
 .prose td {
-  border: 1px solid var(--border);
+  border: var(--brutal-width) solid var(--border-strong);
   padding: 0.55rem 0.85rem;
   text-align: right;
 }
@@ -825,7 +869,7 @@ html[data-theme='dark'] .prose code:not(pre code) {
   font-family: var(--font-mono);
   font-size: 0.86rem;
   line-height: 1.7;
-  border: 1px solid var(--code-border);
+  border: var(--brutal-width) solid var(--border-strong);
   border-radius: var(--radius);
   padding: 1rem 1.15rem;
   overflow-x: auto;
@@ -863,6 +907,8 @@ html[data-theme='dark'] .prose code:not(pre code) {
   max-width: var(--measure);
   margin-inline: 0 auto;
   margin-bottom: 1.75rem;
+  padding-bottom: 1.5rem;
+  border-bottom: var(--brutal-width) solid var(--border);
 }
 
 .article-header .card-type-badge {
@@ -892,7 +938,7 @@ html[data-theme='dark'] .prose code:not(pre code) {
 .article-cover .cover {
   aspect-ratio: 21 / 9;
   border-radius: var(--radius);
-  border: 1px solid var(--border);
+  border: var(--brutal-width) solid var(--border-strong);
 }
 
 .article-cover img {
@@ -900,7 +946,7 @@ html[data-theme='dark'] .prose code:not(pre code) {
   height: auto;
   object-fit: cover;
   border-radius: var(--radius);
-  border: 1px solid var(--border);
+  border: var(--brutal-width) solid var(--border-strong);
 }
 
 .article-meta-row {
@@ -948,7 +994,7 @@ html[data-theme='dark'] .prose code:not(pre code) {
   align-items: center;
   gap: 0.6rem;
   padding: 0.85rem 1.1rem;
-  border: 1px solid var(--border);
+  border: var(--brutal-width) solid var(--border-strong);
   border-radius: var(--radius);
   background: var(--surface-2);
   font-size: 0.95rem;
@@ -978,7 +1024,7 @@ html[data-theme='dark'] .prose code:not(pre code) {
   max-width: 56rem;
   margin: 3rem 0 0;
   padding-top: 2.25rem;
-  border-top: 1px solid var(--border);
+  border-top: var(--brutal-width) solid var(--border-strong);
 }
 
 .related h2 {
@@ -1015,7 +1061,7 @@ html[data-theme='dark'] .prose code:not(pre code) {
   flex-direction: column;
   gap: 0.25rem;
   padding: 1rem 1.15rem;
-  border: 1px solid var(--border);
+  border: var(--brutal-width) solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
   text-decoration: none;
@@ -1055,7 +1101,7 @@ html[data-theme='dark'] .prose code:not(pre code) {
 /* 13. Footer ------------------------------------------------------------- */
 
 .site-footer {
-  border-top: 1px solid var(--border);
+  border-top: var(--brutal-width) solid var(--border-strong);
   padding: 2.25rem 0;
   margin-top: 3rem;
   color: var(--text-faint);
@@ -1082,7 +1128,7 @@ html[data-theme='dark'] .prose code:not(pre code) {
   font-weight: 600;
   color: var(--accent);
   text-decoration: none;
-  border: 1px solid var(--border);
+  border: var(--brutal-width) solid var(--border-strong);
   padding: 0.2rem 0.75rem;
   border-radius: var(--radius-sm);
   background: var(--surface-2);
@@ -1100,7 +1146,7 @@ html[data-theme='dark'] .prose code:not(pre code) {
   outline-offset: 2px;
 }
 
-/* 13. Blog lists ---------------------------------------------------------- */
+/* 14. Blog lists ---------------------------------------------------------- */
 
 .blog-layout {
   display: grid;
@@ -1127,7 +1173,7 @@ html[data-theme='dark'] .prose code:not(pre code) {
   text-align: center;
   color: var(--text-muted);
   background: var(--surface);
-  border: 1px dashed var(--border-strong);
+  border: var(--brutal-width) dashed var(--border-strong);
   border-radius: var(--radius);
 }
 
@@ -1135,7 +1181,7 @@ html[data-theme='dark'] .prose code:not(pre code) {
   margin: 0;
 }
 
-/* 14. Responsive header --------------------------------------------------- */
+/* 15. Responsive header --------------------------------------------------- */
 
 @media (max-width: 920px) {
   .site-header {
@@ -1188,12 +1234,12 @@ html[data-theme='dark'] .prose code:not(pre code) {
     grid-area: nav;
     margin-inline: 0;
     justify-content: flex-start;
-    border-top: 1px solid var(--border);
+    border-top: var(--brutal-width) solid var(--border-strong);
     padding-top: 0.5rem;
   }
 }
 
-/* 15. Responsive content -------------------------------------------------- */
+/* 16. Responsive content -------------------------------------------------- */
 
 @media (max-width: 920px) {
   .main-post-grid {
