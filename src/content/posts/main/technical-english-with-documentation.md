@@ -1,7 +1,7 @@
 ---
 title: تعلّم الإنجليزية التقنية من خلال التوثيقات البرمجية
 author: Samoray
-authorGithub: samoraymiroy-gif
+authorGithub: samoraymiroy-gif 
 description: منهج عملي لتعلّم الإنجليزية التقنية من خلال قراءة التوثيقات البرمجية والاستفادة من ChatGPT وObsidian وAnki.
 type: main
 pubDate: 2026-08-28
