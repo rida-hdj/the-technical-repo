@@ -16,11 +16,33 @@ interface Props {
 }
 
 const { entry, parent, related = [], prev, next } = Astro.props;
-const { title, author, authorGithub, description, image, pubDate, tags, type } =
+const { title, author, authorGithub, description, image, pubDate, updatedDate, tags, type } =
   entry.data;
 const isMain = type === 'main';
 const hasNav = prev || next;
 const singleNav = (prev && !next) || (!prev && next);
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = image ? new URL(image, Astro.site).href : undefined;
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description: description,
+  datePublished: pubDate.toISOString(),
+  dateModified: updatedDate ? updatedDate.toISOString() : pubDate.toISOString(),
+  author: {
+    '@type': 'Person',
+    name: author,
+    url: `https://github.com/${authorGithub}`,
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': canonicalUrl,
+  },
+  ...(ogImage && { image: ogImage }),
+};
 ---
 
 <BaseLayout
@@ -30,6 +52,7 @@ const singleNav = (prev && !next) || (!prev && next);
   currentPath={Astro.url.pathname}
 >
   <article class="article">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
     <div class="article-header">
       <span class="badge badge--accent card-type-badge">
         {isMain ? 'مقال رئيسي' : 'مقال قصير'}

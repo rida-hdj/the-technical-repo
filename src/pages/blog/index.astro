@@ -5,8 +5,18 @@ import SmallPostCard from '../../components/SmallPostCard.astro';
 import { getAllPosts, resolveSmallPosts } from '../../utils/articles';
 
 const posts = await getAllPosts();
-const mainPosts = posts.filter((p) => p.data.type === 'main');
-const smallPosts = posts.filter((p) => p.data.type === 'small');
+
+const sortByDateDesc = (a: typeof posts[0], b: typeof posts[0]) =>
+  new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime();
+
+const mainPosts = posts
+  .filter((p) => p.data.type === 'main')
+  .sort(sortByDateDesc);
+
+const smallPosts = posts
+  .filter((p) => p.data.type === 'small')
+  .sort(sortByDateDesc);
+
 const smallWithParent = await resolveSmallPosts(smallPosts);
 ---
 

@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { url } from '../utils/url';
+---
+
+<BaseLayout
+  title="صفحة غير موجودة"
+  description="الصفحة التي تبحث عنها غير موجودة أو تم نقلها."
+>
+  <section class="container error-page">
+    <h1 class="error-code">404</h1>
+    <p class="error-message">الصفحة غير موجودة</p>
+    <p class="error-hint">
+      يبدو أن الصفحة التي تبحث عنها غير موجودة أو تم نقلها إلى عنوان آخر.
+    </p>
+    <a class="error-link" href={url('/')}>العودة إلى الصفحة الرئيسية</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .error-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem var(--page-pad-inline);
+    min-height: 60vh;
+  }
+
+  .error-code {
+    margin: 0;
+    font-size: clamp(4rem, 12vw, 8rem);
+    font-weight: 800;
+    line-height: 1;
+    color: var(--accent);
+    opacity: 0.35;
+  }
+
+  .error-message {
+    margin: 1rem 0 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .error-hint {
+    margin: 0 0 2rem;
+    color: var(--text-muted);
+    max-width: 30rem;
+    line-height: 1.8;
+  }
+
+  .error-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.65rem 1.5rem;
+    font-weight: 600;
+    color: var(--accent-contrast);
+    background: var(--accent);
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+  }
+
+  .error-link:hover {
+    background: var(--accent-strong);
+    color: var(--accent-contrast);
+  }
+</style>
