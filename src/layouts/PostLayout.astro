@@ -23,7 +23,7 @@ const hasNav = prev || next;
 const singleNav = (prev && !next) || (!prev && next);
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = image ? new URL(image, Astro.site).href : undefined;
+const ogImage = image ? new URL(url(image), Astro.site).href : undefined;
 
 const structuredData = {
   '@context': 'https://schema.org',
